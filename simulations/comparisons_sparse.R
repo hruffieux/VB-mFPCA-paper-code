@@ -86,7 +86,7 @@ cat("Correlation of simulated scores across variables for eigenfunctions 1 to L_
 
 bool_save <- T
 if (bool_save) {
-  res_dir <- paste0(out_dir, "/R1_sim_pulling_",
+  res_dir <- paste0(out_dir, "/comparison_sparse_",
                     ifelse(model_choice_K, "model_choice_K_", ""),
                     paste0(format(rho_Zeta, digits = 2), collapse = "-"),
                     "p_", p, "_N_", N, "_Nt_min_small_", N_t_min_small, 
