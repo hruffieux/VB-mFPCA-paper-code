@@ -294,8 +294,7 @@ Y_mcmc_upp <- lapply(Y_mcmc_summary, function(Y_i) lapply(Y_i, function(Y_i_j) Y
 
 set.seed(seed)
 
-list_hyper <- set_hyper(sigma_zeta = 1, 
-                        sigma_beta = sigma_beta, A = A)
+list_hyper <- set_hyper(sigma_beta = sigma_beta, A = A)
 
 vmp_res <- run_vmp_fpca(time_obs, Y, L = L, K = K, n_g = NULL, time_g = time_g, 
                         tol = tol, maxit = maxit,
