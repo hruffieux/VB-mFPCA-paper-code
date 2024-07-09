@@ -76,7 +76,7 @@ vec_sd_zeta <- (1:L_sim)^exponent_sd_zeta
 sd_eps <- 2.5
 vec_sd_eps <- rep(sd_eps, p)
 
-
+generate_from_univ <- T
 id_strength <- 6 # up to 6
 rho_Zeta <- seq(0, 1, by = 0.2)[id_strength]
 vec_rho_Zeta <- rep(rho_Zeta, L_sim)
@@ -103,6 +103,7 @@ if (bool_save) {
 }
 
 if (rho_Zeta == 1) { # perfect correlation, so we can directly simulate from the multivariate model
+  generate_from_univ <- FALSE
   vec_rho_Zeta <- NULL
 }
 
