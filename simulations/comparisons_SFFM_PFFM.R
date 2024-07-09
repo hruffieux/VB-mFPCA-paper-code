@@ -19,7 +19,7 @@ if (bool_cluster) {
   out_dir <- file.path(CORE_DIR_ICLOUD, "mFPCA_output/")
 }
 
-main_dir <- file.path(CORE_DIR, "VMP-FPCA/revision_1/Kowal_Canale_univariate/")
+main_dir <- file.path(CORE_DIR, "VB-mFPCA-paper-code/simulations/")
 setwd(main_dir)
 
 seed <- 1
@@ -99,9 +99,9 @@ library(ggplot2)
 library(dfosr); library(fGarch); 
 library(coda); library(fields); library(gtools)
 require(bayesFPCA)
-source('helper_functions.R')
-source('source_sffm.R')
-source('source_sffm_gp.R')
+source('SFFM_scripts/helper_functions.R')
+source('SFFM_scripts/source_sffm.R')
+source('SFFM_scripts/source_sffm_gp.R')
 #----------------------------------------------------------------------------
 # Define the parametric functions and the priors:
 #----------------------------------------------------------------------------

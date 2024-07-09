@@ -19,7 +19,7 @@ if (bool_cluster) {
   out_dir <- file.path(CORE_DIR_ICLOUD, "mFPCA_output/")
 }
 
-main_dir <- file.path(CORE_DIR, "bayesian-mFPCA-paper-code/simulations/")
+main_dir <- file.path(CORE_DIR, "VB-mFPCA-paper-code/simulations/")
 setwd(main_dir)
 
 require(bayesFPCA)
@@ -77,7 +77,7 @@ if (generate_from_univ) {
 
 bool_save <- T
 if (bool_save) {
-  res_dir <- paste0(out_dir, "/sim_Happ_", ifelse(generate_from_univ,
+  res_dir <- paste0(out_dir, "/comparison_freq_MFPCA_", ifelse(generate_from_univ,
                            paste0("gen_from_univ_corr_",
                                   paste0(format(rho_Zeta, digits = 2),
                                          collapse = "-"), "_"), ""),
@@ -94,13 +94,6 @@ if (bool_save) {
 } else {
   res_dir <- NULL
 }
-
-
-####################################################
-#
-#  SIMULATE  THE  DATA
-#
-####################################################
 
   
 if (rho_Zeta == 1) { # perfect correlation, so we can directly simulate from the multivariate model
@@ -137,8 +130,7 @@ mfd <- convert_data_for_happ(time_obs, Y)
 
 list_type_j <- list(type = "uFPCA")
 list_type <- rep(list(list_type_j), p)
-bool_ci <- F # pointwise bootstrap confidence bands are calculated for eigenvalues and for Psi_l
-             # does not give the confidence bands for the fit itself??
+bool_ci <- F 
 if(bool_ci) {
   nb_boot <- 100
 } else {
@@ -161,7 +153,7 @@ summary(happ_res)
 print(run_time_happ)
 
 list_time_g_happ <- lapply(happ_res$meanFunction, function(fd_j) as.data.frame(fd_j)$argvals1)
-sapply(list_time_g_happ, length) # evaluation grid (differs for each variable...)
+sapply(list_time_g_happ, length) 
 
 mu_hat_happ <- lapply(happ_res$meanFunction, function(fd_j) as.data.frame(fd_j)$X)
 sapply(mu_hat_happ, length)

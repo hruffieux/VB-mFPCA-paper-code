@@ -71,7 +71,7 @@ if (L_sim > 2) {
 
 n_repl <- 100
 vec_L <- 2:10
-# Number of cores to use
+
 n_cpus <- 50
 
 bool_save <- TRUE

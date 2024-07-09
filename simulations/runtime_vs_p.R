@@ -19,7 +19,7 @@ if (bool_cluster) {
   out_dir <- file.path(CORE_DIR_ICLOUD, "mFPCA_output/")
 }
 
-main_dir <- file.path(CORE_DIR, "bayesian-mFPCA-paper-code/simulations/")
+main_dir <- file.path(CORE_DIR, "VB-mFPCA-paper-code/simulations/")
 setwd(main_dir)
 
 source("fun_utils.R")

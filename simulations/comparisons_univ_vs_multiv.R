@@ -19,7 +19,7 @@ if (bool_cluster) {
   out_dir <- file.path(CORE_DIR_ICLOUD, "mFPCA_output/")
 }
 
-main_dir <- file.path(CORE_DIR, "bayesian-mFPCA-paper-code/simulations/")
+main_dir <- file.path(CORE_DIR, "VB-mFPCA-paper-code/simulations/")
 setwd(main_dir)
 
 require(bayesFPCA)
@@ -61,7 +61,7 @@ n_g <- 1000                                   # length of the plotting grid
 n_repl <- 100
 n_cpus <- 16
 
-ind_exp <- 4
+ind_exp <- 2
 exponent_sd_zeta <- c(-1, -1/2, -1/4, -1/8, -1/16)[ind_exp]
 vec_sd_zeta <- (1:L_sim)^exponent_sd_zeta
 vec_sd_eps <- rep(1, p)                       

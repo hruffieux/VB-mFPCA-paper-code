@@ -2,7 +2,7 @@ rm(list = ls())
 
 CORE_DIR <- Sys.getenv("CORE_DIR")
 
-bool_cluster <- TRUE
+bool_cluster <- T
 if (bool_cluster) {
 
   #!/usr/bin/env Rscript
@@ -19,7 +19,7 @@ if (bool_cluster) {
   out_dir <- file.path(CORE_DIR_ICLOUD, "mFPCA_output/")
 }
 
-main_dir <- file.path(CORE_DIR, "bayesian-mFPCA-paper-code/simulations/")
+main_dir <- file.path(CORE_DIR, "VB-mFPCA-paper-code/simulations/")
 setwd(main_dir)
 
 require(bayesFPCA)
@@ -81,11 +81,11 @@ if (generate_from_univ) {
 }
 
 n_repl <- 200
-n_cpus <- 25
+n_cpus <- 50
 
 bool_save <- T
 if (bool_save) {
-  res_dir <- paste0(out_dir, "/comp_Happ_", 
+  res_dir <- paste0(out_dir, "/comparison_freq_MFPCA_", 
                     ifelse(bool_mfpca_only, "mfpca_only_", ""), 
                     "n_repl_", n_repl, "_", 
                            ifelse(generate_from_univ,
