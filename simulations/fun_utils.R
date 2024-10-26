@@ -542,3 +542,147 @@ summarise_mcmc_multivariate <- function(stan_obj, C_g, Psi_g, L_sim = NULL, pred
   
   return(outputs)
 }
+
+
+display_scores_custom_axes <- function(l_ind, N_sample, Zeta, Zeta_hat, zeta_ellipse,
+                                       Zeta_hat_add = NULL, zeta_ellipse_add = NULL,
+                                       vec_col = c("black", "blue"), data_col = "red",
+                                       mfrow = NULL) {
+  
+  n_sample <- length(N_sample)
+  
+  par(mfrow = c(1, 1))
+  zeta_labels <- vector("list", length = n_sample)
+  zeta_id <- rep(NA, n_sample)
+  
+  if(is.null(mfrow)) {
+    mfrow <- c(floor(sqrt(n_sample)), ceiling(sqrt(n_sample)))
+  }
+  
+  for(i in 1:n_sample) {
+    
+    N_i <- N_sample[i]
+    
+    zeta_id[i] <- parse(text=paste("zeta[", N_i, "]", sep=""))
+    zeta_val <- eval(bquote(expression(zeta[.(N_i)])))
+    zeta_labels[[i]] <- rep(zeta_val, nrow(zeta_ellipse[[N_i]]))
+  }
+  zeta_labels <- do.call(c, zeta_labels)
+  zeta_labels <- factor(zeta_labels, levels=zeta_id)
+  
+  strip.math <- function(
+    which.given, which.panel, var.name, factor.levels, ...
+  ) {
+    
+    fl <- zeta_id
+    
+    strip.default(which.given,which.panel,var.name,fl,...)
+  }
+  
+  zeta_ellipse_mat <- Reduce(rbind, zeta_ellipse[N_sample])
+  zeta_ellipse_x <- zeta_ellipse_mat[,1]
+  zeta_ellipse_y <- zeta_ellipse_mat[,2]
+  
+  
+  if (!is.null(Zeta_hat_add)) {
+    zeta_ellipse_add_mat <- Reduce(rbind, zeta_ellipse_add[N_sample])
+    zeta_ellipse_add_x <- zeta_ellipse_add_mat[,1]
+    zeta_ellipse_add_y <- zeta_ellipse_add_mat[,2]
+  }
+  
+  
+  if (is.list(Zeta)) {
+    xtmp_z <- as.vector(sapply(N_sample, function(ns) c(zeta_ellipse[[ns]][,1],
+                                                        zeta_ellipse[[ns]][,3],
+                                                        unlist(lapply(Zeta, function(zz) zz[ns, 1])),
+                                                        unlist(lapply(Zeta, function(zz) zz[ns, 3])),
+                                                        Zeta_hat[ns,1],
+                                                        Zeta_hat[ns,3])))
+    ytmp_z <- as.vector(sapply(N_sample, function(ns) c(zeta_ellipse[[ns]][,2],
+                                                        zeta_ellipse[[ns]][,4],
+                                                        unlist(lapply(Zeta, function(zz) zz[ns, 2])),
+                                                        unlist(lapply(Zeta, function(zz) zz[ns, 4])),
+                                                        Zeta_hat[ns,2],
+                                                        Zeta_hat[ns,4])))
+    
+  } else {
+    xtmp_z <- as.vector(sapply(N_sample, function(ns) c(zeta_ellipse[[ns]][,1],
+                                                        Zeta[ns, 1],
+                                                        Zeta_hat[ns,1])))
+    ytmp_z <- as.vector(sapply(N_sample, function(ns) c(zeta_ellipse[[ns]][,2],
+                                                        Zeta[ns, 2],
+                                                        Zeta_hat[ns,2])))
+  }
+  xlim_z <- c(min(xtmp_z), max(xtmp_z))
+  ylim_z <- c(min(ytmp_z), max(ytmp_z))
+  
+  Zeta <- Zeta[,l_ind]
+  Zeta_hat <- Zeta_hat[,l_ind]
+  Zeta_hat_add <- Zeta_hat_add[,l_ind]
+  
+  
+  score_plots <- xyplot(
+    zeta_ellipse_y ~ zeta_ellipse_x | zeta_labels, groups = zeta_labels,
+    data=data.frame(
+      zeta_ellipse_x = zeta_ellipse_x, zeta_ellipse_y = zeta_ellipse_y,
+      zeta_labels = zeta_labels
+    ),
+    layout=mfrow, main="",
+    strip=strip.math,
+    xlim = 1.1*xlim_z,
+    ylim = 1.1*ylim_z,
+    par.strip.text=list(cex=0.8),
+    par.settings = list(layout.heights = list(strip = 1),
+                        strip.background=list(col="white")),
+    # key=list(space="top",
+    #          lines=list(col=c("grey55","blue"), lty=1, lwd=1),
+    #          text=list(c("Simulated scores", "Estimated scores"))),
+    xlab=paste0("Scores FPC ", l_ind[1]),
+    ylab=paste0("Scores FPC ", l_ind[2]),
+    as.table=TRUE,
+    panel=function(x, y, subscripts, groups) {
+      
+      iPan <- panel.number()
+      i <- rep(1:n_sample, each=1)[iPan]
+      # panel.grid()
+      panel.xyplot(
+        zeta_ellipse[[N_sample[i]]][,1], zeta_ellipse[[N_sample[i]]][,2],
+        col=vec_col[1], type="l", lwd=1.5
+      )
+      panel.xyplot(
+        Zeta_hat[N_sample[i],1], Zeta_hat[N_sample[i],2],
+        col= vec_col[1], type="p", pch=16, cex=0.7
+      )
+      
+      if (is.list(Zeta)) {
+        for (j in 1:length(Zeta)) {
+          panel.xyplot(
+            Zeta[[j]][N_sample[i], 1], Zeta[[j]][N_sample[i], 2],
+            # col=grDevices::adjustcolor(data_col, alpha.f = 1/j^0.9),
+            col = data_col, type="p", pch=16, cex=0.7
+          )
+        }
+        
+      } else {
+        panel.xyplot(
+          Zeta[N_sample[i], 1], Zeta[N_sample[i], 2],
+          col=data_col, type="p", pch=16, cex=0.7
+        )
+      }
+      
+      if (!is.null(Zeta_hat_add)) {
+        panel.xyplot(
+          zeta_ellipse_add[[N_sample[i]]][,1], zeta_ellipse_add[[N_sample[i]]][,2],
+          col=vec_col[2], type="l", lwd=1.5
+        )
+        panel.xyplot(
+          Zeta_hat_add[N_sample[i],1], Zeta_hat_add[N_sample[i],2],
+          col= vec_col[2], type="p", pch=16, cex=0.7
+        )
+      }
+    }
+  )
+  
+  print(score_plots)
+}
+
